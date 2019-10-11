@@ -1,0 +1,17 @@
+mid_id=$Func{uuid()}
+user_id=$Func{intRand(10000,99999)}
+version_code=v1.0|||v2.0|||v3.0
+version_name=gallery+
+lang=zh
+source=app store
+os=android7|||android8|||android9
+area=CN
+model=VKY-AL00
+brand=huawei
+sdk_version=V2.2.1
+gmail=
+height_width=2560x1440
+app_time=1506047606608
+network=WIFI|||4G
+lng=$Func{doubleRand(0, 180, 2)}
+lat=$Func{doubleRand(0, 90, 2)}
