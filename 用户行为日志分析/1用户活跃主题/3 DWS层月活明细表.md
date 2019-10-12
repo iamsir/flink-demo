@@ -1,5 +1,7 @@
 每月活跃设备分析
+
 1)建表
+```
 drop table if exists dws_uv_detail_mn;
 create  external table dws_uv_detail_mn(
     `mid_id` string COMMENT '设备唯一标识',
@@ -24,8 +26,9 @@ PARTITIONED BY (`mn` string)
 stored as  parquet
 location '/warehouse/gmall/dws/dws_uv_detail_mn/'
 ;
-
+```
 2)导入数据
+```
 insert  overwrite table dws_uv_detail_mn  partition(mn)
 select
     mid_id,
@@ -49,3 +52,4 @@ select
 from dws_uv_detail_day
 where date_format(dt,'yyyy-MM') = date_format('2019-02-10','yyyy-MM')
 group by mid_id;
+```

@@ -1,5 +1,7 @@
 活跃设备分析
+
 1)建表
+```
 drop table if exists ads_uv_count;
 create  external table ads_uv_count(
     `dt` string COMMENT '统计日期',
@@ -12,8 +14,9 @@ create  external table ads_uv_count(
 row format delimited fields terminated by '\t‘
 location '/warehouse/gmall/ads/ads_uv_count_day/'
 ;
-
+```
 2)导入数据
+```
 insert  into table ads_uv_count
 select
   '2019-02-10' dt,
@@ -45,3 +48,4 @@ join
    from dws_uv_detail_mn
    where mn=date_format('2019-02-10','yyyy-MM')
 )mncount on daycount.dt=mncount.dt;
+```
