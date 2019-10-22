@@ -62,12 +62,14 @@ public class StartLogProducer {
         //模拟产生数据并存入kafka
         for(int i = 0; i < DATA_LEN; i++){
             String data = userEventTplAnalyzer.analyse();
-            System.out.println(userEventTplAnalyzer.analyse());
+            
             record = new ProducerRecord<>(TOPIC_NAME,
                     new Random().nextInt()+"",
                     data);
-            //kafkaProducer.send(record);
-            
+            kafkaProducer.send(record);
+
+            // System.out.println(userEventTplAnalyzer.analyse());
+
             long sleep = (long) (Math.random()*2000);
             Thread.sleep(sleep);
 

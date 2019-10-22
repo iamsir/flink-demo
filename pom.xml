@@ -30,9 +30,9 @@ under the License.
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<flink.version>1.9.0</flink.version>
+		<flink.version>1.9.1</flink.version>
 		<java.version>1.8</java.version>
-		<scala.binary.version>2.12</scala.binary.version>
+		<scala.binary.version>2.11</scala.binary.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
@@ -68,12 +68,63 @@ under the License.
 		</dependency>
 
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
-		
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-kafka-0.11_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
+
+        <!-- flink table -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner_2.11</artifactId>
+            <version>${flink.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner-blink_2.11</artifactId>
+            <version>${flink.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-api-java-bridge_2.11</artifactId>
+            <version>${flink.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-common</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-jdbc_2.11</artifactId>
+            <version>${flink.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${flink.version}</version>
+			<scope>provided</scope>
+        </dependency>
+
+        <!-- CLI dependencies -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients_2.11</artifactId>
+            <version>${flink.version}</version>
+			<scope>provided</scope>
+        </dependency>
+
+        <!-- mysql -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.48</version>
+        </dependency>
 
         <!-- lombok -->
         <dependency>
@@ -155,7 +206,7 @@ under the License.
 							</filters>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.zhdan.StreamingJob</mainClass>
+									<mainClass>com.zhdan.flink.StreamingTableJob</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
@@ -236,6 +287,45 @@ under the License.
 					<version>${flink.version}</version>
 					<scope>compile</scope>
 				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-table-planner_2.11</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-table-planner-blink_2.11</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-table-api-java-bridge_2.11</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-jdbc_2.11</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-json</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+
+				<!-- CLI dependencies -->
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-clients_2.11</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+                
 			</dependencies>
 		</profile>
 	</profiles>
