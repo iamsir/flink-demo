@@ -12,7 +12,7 @@ CREATE TABLE start_log_source(
    brand VARCHAR,  
    sdk_version VARCHAR,  
    height_width VARCHAR,  
-   app_time VARCHAR,  
+   app_time TIMESTAMP,
    network VARCHAR,  
    lng FLOAT,  
    lat FLOAT  
@@ -33,7 +33,8 @@ CREATE TABLE start_log_source(
 # sink
 CREATE TABLE start_log_sink ( 
     mid_id VARCHAR, 
-    user_id INT 
+    user_id INT,
+    event_time_test TIMESTAMP
 ) WITH ( 
     'connector.type' = 'jdbc', 
     'connector.url' = 'jdbc:mysql://localhost:3306/flink_test',
@@ -44,5 +45,5 @@ CREATE TABLE start_log_sink (
 );
 
 insert into start_log_sink 
-select mid_id, user_id
+select mid_id, user_id, app_time
 from start_log_source;

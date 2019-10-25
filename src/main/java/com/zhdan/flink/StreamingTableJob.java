@@ -20,6 +20,7 @@ package com.zhdan.flink;
 
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.table.descriptors.Json;
@@ -59,6 +60,7 @@ public class StreamingTableJob {
                 .topic("start_log")
                 .property("bootstrap.servers", "localhost:9092")
                 .property("zookeeper.connect", "localhost:2181")
+                //.startFromSpecificOffset()
         ).withFormat(new Json()
                 .failOnMissingField(true)
                 .deriveSchema()
@@ -76,7 +78,7 @@ public class StreamingTableJob {
                 .field("sdk_version", Types.STRING)
                 .field("gmail", Types.STRING)
                 .field("height_width", Types.STRING)
-                .field("app_time", Types.STRING)
+                .field("app_time", Types.SQL_TIMESTAMP)
                 .field("network", Types.STRING)
                 .field("lng", Types.FLOAT)
                 .field("lat", Types.FLOAT))
@@ -90,7 +92,8 @@ public class StreamingTableJob {
         // sink
         String sinkSql = "CREATE TABLE start_log_sink ( " +
                 "    mid_id VARCHAR, " +
-                "    user_id INT " +
+                "    user_id INT, " +
+                "    event_time_test TIMESTAMP " +
                 ") WITH ( " +
                 "    'connector.type' = 'jdbc', " +
                 "    'connector.url' = 'jdbc:mysql://localhost:3306/flink_test', " +
@@ -105,7 +108,7 @@ public class StreamingTableJob {
 
         String insertSql =
                 "insert into start_log_sink " +
-                        "select mid_id, user_id " +
+                        "select mid_id, user_id, app_time " +
                         "from start_log_source";
 
         tableEnv.sqlUpdate(insertSql);

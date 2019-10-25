@@ -18,8 +18,11 @@
 
 package com.zhdan.flink;
 
+import org.apache.calcite.avatica.proto.Common;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.connectors.kafka.Kafka011TableSourceSinkFactory;
 import org.apache.flink.table.api.EnvironmentSettings;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 
 /**
@@ -49,7 +52,7 @@ public class StreamingSqlJob {
 
 		final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
 
-        //source
+        //source connector.version=universal
         tableEnv.sqlUpdate("CREATE TABLE start_log_source(" +
                 "   mid_id VARCHAR, " +
                 "   user_id INT, " +
@@ -64,7 +67,7 @@ public class StreamingSqlJob {
                 "   sdk_version VARCHAR, " +
                 "   gmail VARCHAR, " +
                 "   height_width VARCHAR, " +
-                "   app_time VARCHAR, " +
+                "   app_time TIMESTAMP, " +
                 "   network VARCHAR, " +
                 "   lng FLOAT, " +
                 "   lat FLOAT " +
@@ -85,7 +88,8 @@ public class StreamingSqlJob {
         //sink
         String sinkSql = "CREATE TABLE start_log_sink ( " +
                 "    mid_id VARCHAR, " +
-                "    user_id INT " +
+                "    user_id INT, " +
+                "    event_time_test TIMESTAMP " +
                 ") WITH ( " +
                 "    'connector.type' = 'jdbc', " +
                 "    'connector.url' = 'jdbc:mysql://localhost:3306/flink_test', " +
@@ -100,7 +104,7 @@ public class StreamingSqlJob {
 
         String insertSql =
                 "insert into start_log_sink " +
-                "select mid_id, user_id " +
+                "select mid_id, user_id, app_time " +
                 "from start_log_source";
 
         tableEnv.sqlUpdate(insertSql);
@@ -108,7 +112,7 @@ public class StreamingSqlJob {
 
 
         // Table result = tableEnv.sqlQuery("select * from start_log_source");
-        // tableEnv.toAppendStream(result, Row.class).print();
+        // tableEnv.toAppendStream(result, Common.Row.class).print();
 
         // execute program
 		env.execute("Flink Streaming Java Sql API Skeleton");
