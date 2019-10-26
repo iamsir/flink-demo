@@ -75,7 +75,7 @@ public class StreamingSqlJob {
                 "   'connector.type' = 'kafka', " +
                 "   'connector.version' = '0.11', " +
                 "   'connector.topic' = 'start_log', " +
-                "   'connector.startup-mode' = 'earliest-offset', " +
+                "   'connector.startup-mode' = 'timestamp', " +
                 "   'connector.properties.0.key' = 'zookeeper.connect', " +
                 "   'connector.properties.0.value' = 'localhost:2181', " +
                 "   'connector.properties.1.key' = 'bootstrap.servers', " +
