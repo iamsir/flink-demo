@@ -11,6 +11,9 @@ import org.apache.flink.table.api.TableConfig;
 import org.apache.flink.table.calcite.FlinkPlannerImpl;
 import org.apache.flink.table.catalog.*;
 import org.apache.flink.table.delegation.Planner;
+import org.apache.flink.table.descriptors.DescriptorProperties;
+import org.apache.flink.table.descriptors.KafkaValidator;
+import org.apache.flink.table.descriptors.SchemaValidator;
 import org.apache.flink.table.expressions.ExpressionBridge;
 import org.apache.flink.table.expressions.PlannerExpressionConverter;
 import org.apache.flink.table.operations.Operation;
@@ -26,6 +29,9 @@ import org.junit.Test;
 import java.util.*;
 
 import static org.apache.calcite.jdbc.CalciteSchemaBuilder.asRootSchema;
+import static org.apache.flink.table.descriptors.KafkaValidator.CONNECTOR_PROPERTIES;
+import static org.apache.flink.table.descriptors.KafkaValidator.CONNECTOR_PROPERTIES_KEY;
+import static org.apache.flink.table.descriptors.KafkaValidator.CONNECTOR_PROPERTIES_VALUE;
 
 
 /**
@@ -197,6 +203,57 @@ public class SqlParseTest {
         }
 
         return result;
+    }
+
+
+    @Test
+    public void testParseProperties() {
+        final FlinkPlannerImpl planner =
+                getPlannerBySqlDialect(SqlDialect.DEFAULT);
+        SqlNode sqlNode = planner.parse(SQL);
+        assert sqlNode instanceof SqlCreateTable;
+        Operation operation = SqlToOperationConverter.convert(planner, sqlNode);
+        assert operation instanceof CreateTableOperation;
+        CreateTableOperation op = (CreateTableOperation) operation;
+        CatalogTable catalogTable = op.getCatalogTable();
+
+        DescriptorProperties descriptorProperties = getValidatedProperties(catalogTable.getProperties());
+
+        Properties kafkaProperties = getKafkaProperties(descriptorProperties);
+        
+
+        System.out.println(kafkaProperties);
+
+
+    }
+
+    private DescriptorProperties getValidatedProperties(Map<String, String> properties) {
+        final DescriptorProperties descriptorProperties = new DescriptorProperties(true);
+        descriptorProperties.putProperties(properties);
+
+        // allow Kafka timestamps to be used, watermarks can not be received from source
+        //new SchemaValidator(true, true, false).validate(descriptorProperties);
+        //new KafkaValidator().validate(descriptorProperties);
+
+        return descriptorProperties;
+    }
+
+    private Properties getKafkaProperties(DescriptorProperties descriptorProperties) {
+        final Properties kafkaProperties = new Properties();
+        final List<Map<String, String>> propsList = descriptorProperties.getFixedIndexedProperties(
+                CONNECTOR_PROPERTIES,
+                Arrays.asList(CONNECTOR_PROPERTIES_KEY, CONNECTOR_PROPERTIES_VALUE));
+        propsList.forEach(kv -> kafkaProperties.put(
+                descriptorProperties.getString(kv.get(CONNECTOR_PROPERTIES_KEY)),
+                descriptorProperties.getString(kv.get(CONNECTOR_PROPERTIES_VALUE))
+        ));
+        return kafkaProperties;
+    }
+
+    @Test
+    public void replaceTest() {
+        String regex = "'connector.timestamp'(.*?),";
+        System.out.println(SQL.replaceAll(regex, ""));
     }
 
 }

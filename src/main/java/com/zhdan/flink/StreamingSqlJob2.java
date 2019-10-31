@@ -18,14 +18,10 @@
 
 package com.zhdan.flink;
 
-import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.api.common.typeinfo.Types;
+import com.zhdan.flink.cli.util.SqlParseUtil;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
-import org.apache.flink.table.functions.ScalarFunction;
-import org.apache.flink.types.Row;
 
 /**
  * Skeleton for a Flink Streaming Job.
@@ -39,8 +35,13 @@ import org.apache.flink.types.Row;
  * <p>If you change the name of the main class (with the public static void main(String[] args))
  * method, change the respective entry in the POM.xml file (simply search for 'mainClass').
  */
-public class StreamingSqlJob {
+public class StreamingSqlJob2 {
 
+    /**
+     * 根据时间戳消费kafka
+     * @param args
+     * @throws Exception
+     */
 	public static void main(String[] args) throws Exception {
 
 	    EnvironmentSettings settings = EnvironmentSettings
@@ -54,42 +55,44 @@ public class StreamingSqlJob {
 
 		final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
 
-		tableEnv.registerFunction("timestampModifier", new TimestampModifier());
-
+		String sql = "CREATE TABLE start_log_source(" +
+				"   mid_id VARCHAR, " +
+				"   user_id INT, " +
+				"   version_code VARCHAR, " +
+				"   version_name VARCHAR, " +
+				"   lang VARCHAR, " +
+				"   source VARCHAR, " +
+				"   os VARCHAR, " +
+				"   area VARCHAR, " +
+				"   model VARCHAR, " +
+				"   brand VARCHAR, " +
+				"   sdk_version VARCHAR, " +
+				"   gmail VARCHAR, " +
+				"   height_width VARCHAR, " +
+				"   app_time VARCHAR, " +
+				"   network VARCHAR, " +
+				"   lng FLOAT, " +
+				"   lat FLOAT " +
+				") WITH (" +
+				"   'connector.type' = 'kafka', " +
+				"   'connector.version' = '0.11', " +
+				"   'connector.topic' = 'start_log', " +
+                "   'connector.properties.2.key' = 'group.id', " +
+                "   'connector.properties.2.value' = 'testGroup', " +
+				"   'connector.startup-mode' = 'specific-offsets',  " +
+				"   'connector.timestamp' = '1572265510276',  " +
+				"   'connector.properties.0.key' = 'zookeeper.connect', " +
+				"   'connector.properties.0.value' = 'localhost:2181', " +
+				"   'connector.properties.1.key' = 'bootstrap.servers', " +
+				"   'connector.properties.1.value' = 'localhost:9092', " +
+				"   'update-mode' = 'append', " +
+				"   'format.type' = 'json', " +
+				"   'format.derive-schema' = 'true' " +
+				")";
+		sql = SqlParseUtil.convertToSpecificOffsetSql(sql);
+		System.out.println(sql);
         //source connector.version=universal
-        tableEnv.sqlUpdate("CREATE TABLE start_log_source(" +
-                "   mid_id VARCHAR, " +
-                "   user_id INT, " +
-                "   version_code VARCHAR, " +
-                "   version_name VARCHAR, " +
-                "   lang VARCHAR, " +
-                "   source VARCHAR, " +
-                "   os VARCHAR, " +
-                "   area VARCHAR, " +
-                "   model VARCHAR, " +
-                "   brand VARCHAR, " +
-                "   sdk_version VARCHAR, " +
-                "   gmail VARCHAR, " +
-                "   height_width VARCHAR, " +
-                "   app_time BIGINT, " +
-                "   network VARCHAR, " +
-                "   lng FLOAT, " +
-                "   lat FLOAT " +
-                ") WITH (" +
-                "   'connector.type' = 'kafka', " +
-                "   'connector.version' = '0.11', " +
-                "   'connector.topic' = 'start_log', " +
-				"   'connector.properties.2.key' = 'group.id', " +
-				"   'connector.properties.2.value' = 'testGroup', " +
-                "   'connector.startup-mode' = 'earliest-offset', " +
-                "   'connector.properties.0.key' = 'zookeeper.connect', " +
-                "   'connector.properties.0.value' = 'localhost:2181', " +
-                "   'connector.properties.1.key' = 'bootstrap.servers', " +
-                "   'connector.properties.1.value' = 'localhost:9092', " +
-                "   'update-mode' = 'append', " +
-                "   'format.type' = 'json', " +
-                "   'format.derive-schema' = 'true' " +
-                ")");
+        tableEnv.sqlUpdate(sql);
 
         //sink
         String sinkSql = "CREATE TABLE start_log_sink ( " +
@@ -110,38 +113,17 @@ public class StreamingSqlJob {
 
         String insertSql =
                 "insert into start_log_sink " +
-                "select mid_id, user_id, timestampModifier(app_time) as app_time " +
+                "select mid_id, user_id, cast(app_time as TIMESTAMP) as app_time " +
                 "from start_log_source";
 
         tableEnv.sqlUpdate(insertSql);
 
 
 
-         //Table result = tableEnv.sqlQuery("select mid_id, user_id, timestampModifier(app_time)  from start_log_source");
-         //tableEnv.toAppendStream(result, Row.class).print();
+        // Table result = tableEnv.sqlQuery("select * from start_log_source");
+        // tableEnv.toAppendStream(result, Common.Row.class).print();
 
         // execute program
 		env.execute("Flink Streaming Java Sql API Skeleton");
 	}
-
-	public static class TimestampModifier extends ScalarFunction {
-
-		public TimestampModifier() {
-
-		}
-
-		public long eval(long t) {
-			return t;
-		}
-
-		@Override
-		public TypeInformation<?> getResultType(Class<?>[] signature) {
-			return Types.SQL_TIMESTAMP;
-		}
-	}
-
-
-
 }
-
-

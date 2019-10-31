@@ -9,4 +9,4 @@
 [https://github.com/wuchong/flink-sql-submit](https://github.com/wuchong/flink-sql-submit)
 
 
-* [todo] 根据时间消费kafka信息
+* 根据时间消费kafka信息

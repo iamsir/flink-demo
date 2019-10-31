@@ -1,5 +1,6 @@
 package com.zhdan.flink.cli;
 
+import com.zhdan.flink.cli.util.SqlParseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableEnvironment;
@@ -31,6 +32,7 @@ public class SqlSubmit {
         final TableEnvironment tableEnv = TableEnvironment.create(settings);
         //sql文本中只有create、insert语句
         for (String sql : sqls) {
+            sql = SqlParseUtil.convertToSpecificOffsetSql(sql);
             tableEnv.sqlUpdate(sql);
         }
 
