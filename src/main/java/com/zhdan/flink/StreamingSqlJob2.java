@@ -55,6 +55,8 @@ public class StreamingSqlJob2 {
 
 		final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
 
+		// register function
+        tableEnv.registerFunction("timestampModifier", new StreamingSqlJob.TimestampModifier());
 		String sql = "CREATE TABLE start_log_source(" +
 				"   mid_id VARCHAR, " +
 				"   user_id INT, " +
@@ -69,7 +71,7 @@ public class StreamingSqlJob2 {
 				"   sdk_version VARCHAR, " +
 				"   gmail VARCHAR, " +
 				"   height_width VARCHAR, " +
-				"   app_time VARCHAR, " +
+				"   app_time BIGINT, " +
 				"   network VARCHAR, " +
 				"   lng FLOAT, " +
 				"   lat FLOAT " +
@@ -80,7 +82,7 @@ public class StreamingSqlJob2 {
                 "   'connector.properties.2.key' = 'group.id', " +
                 "   'connector.properties.2.value' = 'testGroup', " +
 				"   'connector.startup-mode' = 'specific-offsets',  " +
-				"   'connector.timestamp' = '1572265510276',  " +
+				"   'connector.timestamp' = '1572451200000',  " +
 				"   'connector.properties.0.key' = 'zookeeper.connect', " +
 				"   'connector.properties.0.value' = 'localhost:2181', " +
 				"   'connector.properties.1.key' = 'bootstrap.servers', " +
@@ -113,7 +115,7 @@ public class StreamingSqlJob2 {
 
         String insertSql =
                 "insert into start_log_sink " +
-                "select mid_id, user_id, cast(app_time as TIMESTAMP) as app_time " +
+                "select mid_id, user_id, timestampModifier(app_time) as app_time " +
                 "from start_log_source";
 
         tableEnv.sqlUpdate(insertSql);

@@ -9,4 +9,10 @@
 [https://github.com/wuchong/flink-sql-submit](https://github.com/wuchong/flink-sql-submit)
 
 
-* 根据时间消费kafka信息
+* flink kafka consumer根据时间消费kafka信息
+
+[todo]kafka消费消息几个场景:
+- 从当前时间往前推2个小时开始接着消费,消费完这2个小时断开
+- 从当前时间往前推2个小时开始接着持续消费
+- 指定个时间戳开始持续消费
+- 指定个开始时间与结束时间消费,消费完断开
