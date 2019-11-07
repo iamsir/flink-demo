@@ -68,7 +68,7 @@ public class StartLogProducer {
                     data);
             kafkaProducer.send(record);
 
-            // System.out.println(userEventTplAnalyzer.analyse());
+            System.out.println(data);
 
             long sleep = (long) (Math.random()*2000);
             Thread.sleep(sleep);
