@@ -22,7 +22,7 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.table.descriptors.Json;
@@ -53,7 +53,7 @@ public class StreamingJob {
         prop.put("bootstrap.servers", "localhost:9092");
         prop.put("group.id", "flink-streaming-job");
 
-        FlinkKafkaConsumer011<String> consumer = new FlinkKafkaConsumer011<>("start_log", new SimpleStringSchema(), prop);
+        FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<>("start_log", new SimpleStringSchema(), prop);
         //指定Timestamp位置开始消费kafka数据
         consumer.setStartFromTimestamp(1571909309022L);
         //source

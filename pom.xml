@@ -33,6 +33,7 @@ under the License.
 		<flink.version>1.9.1</flink.version>
 		<java.version>1.8</java.version>
 		<scala.binary.version>2.11</scala.binary.version>
+		<hadoop.version>2.8.3</hadoop.version>
 		<junit.version>4.12</junit.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
@@ -71,26 +72,26 @@ under the License.
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-connector-kafka-0.11_${scala.binary.version}</artifactId>
+			<artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
 
         <!-- flink table -->
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-planner_2.11</artifactId>
+            <artifactId>flink-table-planner_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
 			<scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-planner-blink_2.11</artifactId>
+            <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
 			<scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-api-java-bridge_2.11</artifactId>
+            <artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
 			<scope>provided</scope>
         </dependency>
@@ -101,7 +102,7 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-jdbc_2.11</artifactId>
+            <artifactId>flink-jdbc_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
 			<scope>provided</scope>
         </dependency>
@@ -115,10 +116,23 @@ under the License.
         <!-- CLI dependencies -->
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients_2.11</artifactId>
+            <artifactId>flink-clients_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
 			<scope>provided</scope>
         </dependency>
+
+		<!-- flink hbase -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-hbase_${scala.binary.version}</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>${hadoop.version}</version>
+		</dependency>
 
         <!-- mysql -->
         <dependency>
@@ -139,6 +153,8 @@ under the License.
             <groupId>com.cloudwise.toushibao</groupId>
             <artifactId>simulatedata-generator</artifactId>
             <version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/extend-lib/simulatedata-generator-0.0.1.jar</systemPath>
         </dependency>
 
 		<!-- Add logging framework, to produce console output when running in the IDE. -->
